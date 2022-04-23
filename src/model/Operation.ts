@@ -1,19 +1,16 @@
 /*
- * @Author: TengLong
- * @Date: 2022-04-22 10:33:53
- * @LastEditTime: 2022-04-22 11:12:21
- * @LastEditors: TengLong
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: \vue-test\src\model\Operation.ts
+ * @Author: Striver-TL
+ * @GitHubAdress: https://github.com/Striver-TL
+ * @Date: 2022-04-22 18:28:33
+ * @LastEditors: your name
+ * @LastEditTime: 2022-04-23 17:54:13
+ * @Description: file content
  */
-// 此类中记录指数和整数
 class PowNum {
+    numbers: Array<number>;
     index: number;
-    num1: number;
-    num2: number; 
-    constructor(num1: number, num2: number, index: number) {
-        this.num1 = num1;
-        this.num2 = num2;
+    constructor(numbers: Array<number>, index: number) {
+        this.numbers = numbers;
         this.index = index;
     }
 }
@@ -29,34 +26,53 @@ class Operation {
         } else return 1;
     }
 
+    private getLengthAll(...args: any[]): Array<number> {
+        const arr: Array<number> = [];
+        args.forEach(e => {
+            arr.push(this.getLength(e));
+        });
+        return arr;
+    }
+
+
     // 转化为整数
-    private toPow(num1: number, num2: number): PowNum {
-        // 计算num1小数点位数
-        const num1Length = this.getLength(num1);
-        // 计算num2小数点位数
-        const num2Length = this.getLength(num2);
-        const index = this._Math.pow(10, num1Length >= num2Length ? num1Length : num2Length);
-        return new PowNum(num1 * index, num2 * index, index);
+    private toPow(...args: any[]): PowNum {
+        const length: Array<number> = this.getLengthAll(...args);
+        const pows: Array<number> = length.map(e => this._Math.pow(10, e));
+        const max = this._Math.max(...pows);
+        const numbers: Array<number> = [];
+        args.forEach((e, index) => {
+            numbers.push(e * pows[index] * (max / pows[index]));
+        });
+        return new PowNum(numbers, max);
     }
     // 加法计算
-    add(num1: number, num2: number): number {
-        const d: PowNum = this.toPow(num1, num2);
-        return (d.num1 + d.num2) / d.index;
+    add(...args: any[]): number {
+        const d: PowNum = this.toPow(...args);
+        return d.numbers.reduce((a: number, b: number) => {
+            return a + b;
+        }) / d.index;
     }
     // 减法计算
-    sub(num1: number, num2: number): number {
-        const d: PowNum = this.toPow(num1, num2);
-        return (d.num1 - d.num2) / d.index;
+    sub(...args: any[]): number {
+        const d: PowNum = this.toPow(...args);
+        return d.numbers.reduce((a: number, b: number) => {
+            return a - b;
+        }) / d.index;
     }
     // 乘法计算
-    mul(num1: number, num2: number): number {
-        const d: PowNum = this.toPow(num1, num2);
-        return (d.num1 * d.num2) / this._Math.pow(d.index, 2);
+    mul(...args: any[]): number {
+        const d: PowNum = this.toPow(...args);
+        return d.numbers.reduce((a: number, b: number) => {
+            return a * b;
+        }, 1) / this._Math.pow(d.index, d.numbers.length);
     }
     // 除法计算
-    div(num1: number, num2: number): number {
-        const d: PowNum = this.toPow(num1, num2);
-        return (d.num1 / d.num2) / this._Math.pow(d.index, 2);
+    div(...args: any[]): number {
+        const d: PowNum = this.toPow(...args);
+        return d.numbers.reduce((a: number, b: number) => {
+            return a / b;
+        }) * this._Math.pow(d.index, args.length - 2);
     }
 }
 

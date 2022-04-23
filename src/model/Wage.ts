@@ -1,19 +1,24 @@
 /*
- * @Author: TengLong
- * @Date: 2022-04-22 08:03:46
- * @LastEditTime: 2022-04-22 11:13:05
- * @LastEditors: TengLong
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: \vue-test\src\model\Wage.ts
+ * @Author: Striver-TL
+ * @GitHubAdress: https://github.com/Striver-TL
+ * @Date: 2022-04-22 18:28:33
+ * @LastEditors: Striver-TL
+ * @LastEditTime: 2022-04-23 17:56:02
+ * @Description: file content
  */
 class Wage {
+  // grossType 和 takeType的作用是用来区分输入的是哪个数据
+  // 税前工资的id
+  grossType = 1;
+  // 到手工资的id
+  takeType = 2;
   // 税前工资
-  gross: number | undefined = undefined;
+  gross: number | string = '';
   // 实际工资
-  take: number | undefined = undefined;
-  // 数据验证器
+  take: number | string = '';
+  // 数据验证器（数字）
   validator(string: string): boolean {
-    return /^\d+\.?\d*$/.test(string);
+    return /^\d+\.?\d*$/g.test(string);
   }
 }
 

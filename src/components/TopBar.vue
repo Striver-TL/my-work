@@ -1,5 +1,5 @@
 <template>
-  <div class="topbar"> 
+  <div class="topbar">
     <div class="container clearfix">
       <div class="topbar-left float-start clearfix">
         <div class="title float-start">

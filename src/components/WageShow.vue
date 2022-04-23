@@ -1,7 +1,7 @@
 <template>
   <div class="show">
     <table class="table table-bordered">
-      <thead>
+      <thead class="fw-bolder">
         <tr class="text-center">
           <td rowspan="2" colspan="2" width="30%">缴存项目</td>
           <td colspan="2">个人部分</td>
@@ -16,7 +16,7 @@
       </thead>
       <tbody>
         <tr>
-          <td rowspan="5" class="text-center">五险</td>
+          <td class="fw-bolder text-center" rowspan="5">五险</td>
           <td>养老保险</td>
           <td>{{ personalRatio.endowment }}</td>
           <td>
@@ -72,7 +72,7 @@
           </td>
         </tr>
         <tr>
-          <td class="text-center">一金</td>
+          <td class="text-center fw-bolder">一金</td>
           <td>住房公益金</td>
           <td>{{ personalRatio.housing }}</td>
           <td>
@@ -179,7 +179,7 @@ tbody > tr:nth-child(2n-1) {
 }
 
 tbody span {
-  color: #333 !important;
+  color: #f33 !important;
   font-weight: bold;
 }
 </style>

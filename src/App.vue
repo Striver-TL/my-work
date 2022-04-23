@@ -1,13 +1,27 @@
+<!--
+ * @Author: Striver-TL
+ * @GitHubAdress: https://github.com/Striver-TL
+ * @Date: 2022-04-22 18:28:33
+ * @LastEditors: Striver-TL
+ * @LastEditTime: 2022-04-23 19:15:09
+ * @Description: file content
+-->
 <template>
   <header>
     <TopBar />
   </header>
   <main>
     <div class="container">
-      <Calculator @initdata="initData(wageData)" @compute="toCompute" />
+      <Calculator :wageData="wage" @initdata="initData(wageData)" @compute="toCompute" />
       <WageShow :wageData="wageData" />
+      <div class="how">
+        <a href="javascript:void(0)" class="float-end">具体怎么算呢？</a>
+      </div>
     </div>
   </main>
+  <footer>
+    <Footer />
+  </footer>
 </template>
 
 <script lang="ts">
@@ -16,109 +30,61 @@ import { reactive } from "vue";
 import TopBar from "./components/TopBar.vue";
 import Calculator from "./components/Calculator.vue";
 import WageShow from "./components/WageShow.vue";
+import Footer from "./components/Footer.vue";
+
+import wageCompute from "./model/WageCompute";
+import WageData from "./model/WageData";
 import Wage from "./model/Wage";
-import { personalTax, companyTax } from "./model/Tax";
-import operation from './model/Operation';
 export default {
   name: "App",
   setup(): unknown {
+    let wage = reactive(new Wage());
+    let wageData = reactive(new WageData());
+
     /**
-     * @param { any } data 
-     * 
+     * 作用：清空指定对象的属性值改为undefined
+     * @param { any } data 要将属性值转为undefined的对象
+     *
      */
     let initData: (data: any) => void = (data: any): void => {
+      // 遍历修改
       let key: keyof typeof data;
       for (key in data) {
-        if (data[key] instanceof Object) {
-          initData(data[key]);
-        } else {
-          data[key] = undefined;
-        }
+        // 如果该属性值为对象递归清空
+        // 否则转为undefined
+        Object.prototype.toString.call(data[key]) === "[object Object]"
+          ? initData(data[key])
+          : (data[key] = undefined);
       }
     };
-    let wageData = reactive({
-        tax: {
-          // 个人纳税
-          personal: {
-            endowment: undefined,
-            medical: undefined,
-            unemployment: undefined,
-            injury: undefined,
-            maternity: undefined,
-            housing: undefined,
-          },
-          // 单位纳税
-          company: {
-            endowment: undefined,
-            medical: undefined,
-            unemployment: undefined,
-            injury: undefined,
-            maternity: undefined,
-            housing: undefined,
-          },
-        },
-        // 个人共纳税
-        personalTotal: undefined,
-        // 单位共纳税
-        companyTotal: undefined,
-        // 总纳税
-        totalTax: undefined,
-        // 扣除五险一金后工资
-        deduct: undefined,
-        // 个人所得税
-        incomeTax: undefined,
-        // 到手工资
-        handWages: undefined,
-      } as any);
-    // 计算程序
-    let toCompute: (wage: Wage) => void = (wage: Wage): void => {
-      if (!wage) return;
-      let gross: number = wage.gross === undefined ? 0 : wage.gross as number;
-      // key 为缴纳比例对象中的缴税项的key
-      let key: keyof typeof companyTax;
-      let tax = wageData.tax;
-      wageData.personalTotal = wageData.companyTotal = 0;
-      for (key in companyTax) {
-        // 计算出个人的当前税缴纳金额
-        tax.personal[key] = operation.mul(personalTax[key], gross);
-        // 计算出单位的当前税缴纳金额
-        tax.company[key] = operation.mul(companyTax[key], gross);
-        // 累加缴纳的税
-        wageData.personalTotal = operation.add(wageData.personalTotal, tax.personal[key]);
-        wageData.companyTotal = operation.add(wageData.companyTotal, tax.company[key]);
-      }
-      // 总缴纳的税为个人总缴纳+单位总缴纳
-      wageData.totalTax = operation.add(wageData.personalTotal, wageData.companyTotal);
-      // 扣除五险一金后的工资
-      wageData.deduct = operation.sub(gross, wageData.personalTotal);
-      // 计算个人所得税
-      let item: Array<number>;
-      let next: Array<number>;
-      let length = personalTax.incomeTax.length;
-      wageData.incomeTax = 0;
-      for (let i = 0; i < length; i++) {
-        item = personalTax.incomeTax[i];
-        next = i + 1 > length - 1 ? [Infinity] : personalTax.incomeTax[i + 1];
-        // 确定税前工资在哪个区间里
-        if (wageData.deduct > item[0] && wageData.deduct < next[0]) {
-          // 公式：税前工资 * 该区间税率 - 
-          wageData.incomeTax = operation.sub(operation.mul(wageData.deduct, item[1]), item[2]);
-          break;
-        }
-      }
-      // 计算到手工资
-      wageData.handWages = operation.sub(wageData.deduct, wageData.incomeTax);
-    };
+
+    initData(wageData);
+
     return {
-      toCompute,
+      wage,
       wageData,
-      initData
+      initData() {
+        initData(wageData);
+        wage.take = "";
+        wage.gross = "";
+      },
+      // 计算工资
+      toCompute(type: number, wage: Wage) {
+        if (type === wage.grossType) {
+          wageCompute.computeBefore(wageData, Number(wage.gross));
+          wage.take = wageData.handWages;
+        } else {
+          wageCompute.computeAfter(wageData, Number(wage.take));
+          wage.gross = wageData.beforeMoney;
+        }
+      },
     };
   },
   components: {
     TopBar,
     Calculator,
     WageShow,
+    Footer,
   },
 };
 </script>
@@ -131,10 +97,15 @@ export default {
 }
 
 main {
-  padding-top: 38px;
+  padding: 40px 0;
 }
 
 main .container {
   padding: 0 100px;
+}
+
+.how a {
+  text-decoration: none;
+  color: #007bff;
 }
 </style>
