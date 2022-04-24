@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import citys from "../model/citys";
+import citys from "@/data/citys";
 import { useStore } from "vuex";
 
 export default defineComponent({

@@ -3,7 +3,7 @@
  * @GitHubAdress: https://github.com/Striver-TL
  * @Date: 2022-04-23 17:54:52
  * @LastEditors: Striver-TL
- * @LastEditTime: 2022-04-23 18:10:45
+ * @LastEditTime: 2022-04-23 21:27:23
  * @Description: file conten
 -->
 
@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 export default defineComponent({
   name: "FooterComponent",
   setup() {
@@ -24,11 +24,13 @@ export default defineComponent({
     const resizeFunc = () => {
       isBottom.value = document.body.clientHeight < window.innerHeight;
     };
-    resizeFunc();
-    window.addEventListener("resize", resizeFunc, false);
+    onMounted(() => {
+      resizeFunc();
+      window.addEventListener("resize", resizeFunc, false);
+    });
     return {
-        isBottom
-    }
+      isBottom,
+    };
   },
 });
 </script>

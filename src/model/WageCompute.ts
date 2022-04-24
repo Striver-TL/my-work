@@ -3,15 +3,32 @@
  * @GitHubAdress: https://github.com/Striver-TL
  * @Date: 2022-04-23 14:32:35
  * @LastEditors: Striver-TL
- * @LastEditTime: 2022-04-23 19:13:07
+ * @LastEditTime: 2022-04-24 13:08:21
  * @Description: file content
  */
 
 import WageData from './WageData';
 import Operation from './Operation';
-import { personalTax, companyTax } from './Tax';
+import { personalTax, companyTax } from '@/data/taxData';
 
 class WageCompute {
+    static {
+        // 存储个人所得税缴纳比例区间（基于到手工资）
+        personalTax.incomeTaxReverse = personalTax.incomeTax.map(e => {
+            const item = e.concat();
+            // 计算扣除五险一金后工资
+            // 等价于： deduct = (1 - this.endowment - this.medical - this.unemployment - this.injury - this.maternity - this.housing) * item[0]
+            const deduct = Operation.mul(Operation.sub(1, personalTax.endowment, personalTax.medical, personalTax.unemployment, personalTax.injury, personalTax.maternity, personalTax.housing), item[0]);
+            // 计算到手工资
+            item[0] = Operation.sub(deduct, Operation.mul(deduct, item[1]), -item[2]);
+            return item;
+        });
+        const infinity: Array<number> = [Infinity];
+        // 添加边界（避免超出区间）
+        personalTax.incomeTax.push(infinity);
+        personalTax.incomeTaxReverse.push(infinity);
+    }
+
     /**
      * 通过税前工资计算
      * @author Striver-TL
@@ -19,7 +36,7 @@ class WageCompute {
      * @param money 税前工资
      * @returns { WageData } 计算后的税额数据对象
      */
-    computeBefore(wageData: WageData, money: number): WageData {
+    static computeBefore(wageData: WageData, money: number): WageData {
         // 计算五险一金的税额
         const { personal, company } = wageData.tax;
         // 个人总税额
@@ -50,7 +67,7 @@ class WageCompute {
         // 确立区间
         const { incomeTax } = personalTax;
         for (let i = 0; i < incomeTax.length - 1; i ++) {
-            if (money >= incomeTax[i][0] && money < incomeTax[i + 1][0]) {
+            if (wageData.deduct >= incomeTax[i][0] && wageData.deduct < incomeTax[i + 1][0]) {
                 const item = incomeTax[i];
                 // 计算个人所得税
                 wageData.incomeTax = Operation.sub(Operation.mul(wageData.deduct, item[1]), item[2]);
@@ -71,7 +88,7 @@ class WageCompute {
      * @author Striver-TL
      */
 
-    computeAfter(wageData: WageData, money: number): WageData {
+    static computeAfter(wageData: WageData, money: number): WageData {
         // 税前工资
         let before = 0;
         // 获取基于到手工资的个人所得税税率数据
@@ -99,4 +116,4 @@ class WageCompute {
     }
 }
 
-export default new WageCompute();
+export default WageCompute;

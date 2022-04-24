@@ -3,7 +3,7 @@
  * @GitHubAdress: https://github.com/Striver-TL
  * @Date: 2022-04-22 18:28:33
  * @LastEditors: Striver-TL
- * @LastEditTime: 2022-04-23 19:15:09
+ * @LastEditTime: 2022-04-24 13:04:27
  * @Description: file content
 -->
 <template>
@@ -12,10 +12,22 @@
   </header>
   <main>
     <div class="container">
-      <Calculator :wageData="wage" @initdata="initData(wageData)" @compute="toCompute" />
+      <Calculator
+        :wageData="wage"
+        @initdata="initData(wageData)"
+        @compute="toCompute"
+      />
       <WageShow :wageData="wageData" />
       <div class="how">
-        <a href="javascript:void(0)" class="float-end">具体怎么算呢？</a>
+        <a href="javascript:void(0)" class="float-end" @click="showHow = true">具体怎么算呢？</a>
+        <Motal :show="showHow" @close="showHow = false">
+          <template v-slot:title>
+            <h3>工资计算方式</h3>
+          </template>
+          <template v-slot:content>
+            <HowCompute />
+          </template>
+        </Motal>
       </div>
     </div>
   </main>
@@ -25,22 +37,25 @@
 </template>
 
 <script lang="ts">
-import { reactive } from "vue";
+import { reactive, ref, Ref } from "vue";
 
 import TopBar from "./components/TopBar.vue";
 import Calculator from "./components/Calculator.vue";
 import WageShow from "./components/WageShow.vue";
 import Footer from "./components/Footer.vue";
+import Motal from "./components/Motal.vue";
+import HowCompute from "./components/HowCompute.vue";
 
 import wageCompute from "./model/WageCompute";
 import WageData from "./model/WageData";
 import Wage from "./model/Wage";
+
 export default {
   name: "App",
   setup(): unknown {
     let wage = reactive(new Wage());
     let wageData = reactive(new WageData());
-
+    let showHow: Ref<boolean> = ref(false);
     /**
      * 作用：清空指定对象的属性值改为undefined
      * @param { any } data 要将属性值转为undefined的对象
@@ -63,6 +78,7 @@ export default {
     return {
       wage,
       wageData,
+      showHow,
       initData() {
         initData(wageData);
         wage.take = "";
@@ -85,6 +101,8 @@ export default {
     Calculator,
     WageShow,
     Footer,
+    Motal,
+    HowCompute,
   },
 };
 </script>

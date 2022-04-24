@@ -113,7 +113,7 @@
 
 <script lang="ts">
 import { defineComponent, toRefs } from "vue";
-import { personalTax, companyTax } from "../model/Tax";
+import { personalTax, companyTax } from "@/data/taxData";
 export default defineComponent({
   name: "WageShow",
   props: {

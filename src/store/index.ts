@@ -3,11 +3,11 @@
  * @GitHubAdress: https://github.com/Striver-TL
  * @Date: 2022-04-22 18:28:33
  * @LastEditors: Striver-TL
- * @LastEditTime: 2022-04-23 17:55:54
+ * @LastEditTime: 2022-04-24 10:30:00
  * @Description: file content
  */
 import { createStore } from 'vuex'
-import citys from '../model/citys'
+import citys from '@/data/citys'
 
 export default createStore({
   state: {

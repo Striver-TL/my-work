@@ -22,34 +22,51 @@
       />
     </div>
     <div class="row calculator-btn">
-      <button class="col-sm btn btn-success" @click="toComputeHandler">计算</button>
+      <button class="col-sm btn btn-success" @click="toComputeHandler">
+        计算
+      </button>
       <button class="col-sm btn btn-danger" @click="initData">重新计算</button>
     </div>
+    <Motal :show="showMessage" @close="closeMessage">
+      <template v-slot:title>
+        <h4>{{ message }}</h4>
+      </template>
+      <template v-slot:content>
+        <button class="motal-btn btn btn-danger" @click="closeMessage">确定</button>
+      </template>
+    </Motal>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref, Ref } from "vue";
 import { useStore } from "vuex";
-import Wage from "../model/Wage";
+import Motal from './Motal.vue';
+
+import Wage from "@/model/Wage";
 export default defineComponent({
   name: "CaculatorComponent",
   props: {
     wageData: {
       type: Wage,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(prop, context): unknown {
     // 工资数据
     let wage = reactive(prop.wageData);
     // 城市数据
     let store = useStore();
+    // 是否显示弹窗信息
+    let showMessage: Ref<boolean> = ref(false);
+    // 弹窗信息
+    let message: Ref<string> = ref("");
     // 计算按钮handler
     let toComputeHandler: () => void = (): void => {
       // 如果没有输入数据警告退出
       if (wage.gross == "" && wage.take == "") {
-        alert("请输入税前工资或到手工资");
+        showMessage.value = true;
+        message.value = "请输入税前工资或到手工资";
         return;
       }
       // 获取输入的是税前工资还是税后工资
@@ -59,7 +76,8 @@ export default defineComponent({
         (type === wage.grossType && !wage.validator(wage.gross.toString())) ||
         (type === wage.takeType && !wage.validator(wage.take.toString()))
       ) {
-        alert("请输入有效的工资");
+        showMessage.value = true;
+        message.value = "请输入有效的工资";
         return;
       }
       // 通知父组件进行计算
@@ -72,13 +90,24 @@ export default defineComponent({
       context.emit("initdata");
     };
 
+    // 关闭弹窗方法
+    let closeMessage: () => void = (): void => {
+      showMessage.value = false;
+      message.value = "";
+    };
     return {
       wage,
+      store,
+      message,
+      showMessage,
       toComputeHandler,
       initData,
-      store,
+      closeMessage,
     };
   },
+  components: {
+    Motal,
+  }
 });
 </script>
 
@@ -109,5 +138,11 @@ export default defineComponent({
 
 .red {
   color: #f33;
+}
+
+.motal-btn {
+  display: block;
+  width: 100px;
+  margin: 30px auto 10px;
 }
 </style>
