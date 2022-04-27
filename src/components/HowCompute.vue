@@ -61,24 +61,27 @@
       </tr>
     </thead>
     <tbody>
-        <tr v-for="item, index in incomeTax" :key="index">
-            <td>{{index + 1}}</td>
-            <td>{{item[0]}}</td>
-            <td>{{item[1] * 100}}</td>
-            <td>{{item[2]}}</td>
-        </tr>
+      <tr v-for="(item, index) in incomeTax" :key="index">
+        <td>{{ index + 1 }}</td>
+        <td>{{ item[0] }}</td>
+        <td>{{ item[1] * 100 }}</td>
+        <td>{{ item[2] }}</td>
+      </tr>
     </tbody>
   </table>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { personalTax } from '@/data/taxData'
+import { personalTax } from "@/data/taxData";
 export default defineComponent({
   name: "HowCompute",
   setup() {
     return {
-        incomeTax: personalTax.incomeTax.slice(0, personalTax.incomeTax.length - 1)
+      incomeTax: personalTax.incomeTax.slice(
+        0,
+        personalTax.incomeTax.length - 1
+      ),
     };
   },
 });
@@ -86,11 +89,15 @@ export default defineComponent({
 
 <style scoped>
 table.table {
-    width: 600px;
+  width: 600px;
+  font-size: 10px;
+}
+
+.table td {
+  padding: 0;
 }
 
 tbody tr:nth-child(2n-1) {
-    background: rgb(242, 242, 242);
+  background: rgb(242, 242, 242);
 }
-
 </style>
