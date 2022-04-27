@@ -3,7 +3,7 @@
  * @GitHubAdress: https://github.com/Striver-TL
  * @Date: 2022-04-22 18:28:33
  * @LastEditors: Striver-TL
- * @LastEditTime: 2022-04-24 13:04:27
+ * @LastEditTime: 2022-04-27 14:07:18
  * @Description: file content
 -->
 <template>
@@ -19,13 +19,20 @@
       />
       <WageShow :wageData="wageData" />
       <div class="how">
-        <a href="javascript:void(0)" class="float-end" @click="showHow = true">具体怎么算呢？</a>
+        <a href="javascript:void(0)" class="float-end" @click="showHow = true"
+          >具体怎么算呢？</a
+        >
         <Motal :show="showHow" @close="showHow = false">
           <template v-slot:title>
             <h3>工资计算方式</h3>
           </template>
-          <template v-slot:content>
+          <template v-slot:content="motalProps">
             <HowCompute />
+            <div class="text-center">
+              <button class="btn btn-primary" @click="motalProps.close">
+                关闭
+              </button>
+            </div>
           </template>
         </Motal>
       </div>

@@ -3,7 +3,7 @@
  * @GitHubAdress: https://github.com/Striver-TL
  * @Date: 2022-04-24 12:10:39
  * @LastEditors: Striver-TL
- * @LastEditTime: 2022-04-24 13:12:39
+ * @LastEditTime: 2022-04-27 14:03:02
  * @Description: file content
 -->
 
@@ -14,7 +14,7 @@
         <slot name="title"></slot>
       </div>
       <div class="motal-content">
-        <slot name="content"></slot>
+        <slot name="content" :close="close"></slot>
       </div>
       <div class="motal-close">
         <button @click="close"></button>
