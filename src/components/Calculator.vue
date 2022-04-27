@@ -2,7 +2,11 @@
   <div class="calculator">
     <h3 class="title">"{{ store.state.city }}"五险一金及税后工资计算器</h3>
     <div>
-      <span>税前工资：<span class="red">（编辑以税前工资进行计算）</span></span>
+      <span
+        >税前工资：<span class="red" v-show="wage.take === ''"
+          >（编辑以税前工资进行计算）</span
+        ></span
+      >
       <input
         type="text"
         placeholder="税前工资"
@@ -12,7 +16,11 @@
       />
     </div>
     <div>
-      <span>到手工资：<span class="red">（编辑以到手工资进行计算）</span></span>
+      <span
+        >到手工资：<span class="red" v-show="wage.gross === ''"
+          >（编辑以到手工资进行计算）</span
+        ></span
+      >
       <input
         type="text"
         placeholder="到手工资"
@@ -32,7 +40,9 @@
         <h4>{{ message }}</h4>
       </template>
       <template v-slot:content>
-        <button class="motal-btn btn btn-danger" @click="closeMessage">确定</button>
+        <button class="motal-btn btn btn-danger" @click="closeMessage">
+          确定
+        </button>
       </template>
     </Motal>
   </div>
@@ -41,7 +51,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref, Ref } from "vue";
 import { useStore } from "vuex";
-import Motal from './Motal.vue';
+import Motal from "./Motal.vue";
 
 import Wage from "@/model/Wage";
 export default defineComponent({
@@ -107,7 +117,7 @@ export default defineComponent({
   },
   components: {
     Motal,
-  }
+  },
 });
 </script>
 

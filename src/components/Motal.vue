@@ -61,7 +61,7 @@ export default defineComponent({
   transform: translate(-50%, -50%);
   background: #fff;
   padding: 40px 40px 20px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, .4);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
 .motal-title {
